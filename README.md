@@ -1,105 +1,95 @@
 # Simple E-Commerce REST API
 
-A Spring Boot REST API for managing products, categories, and user authentication using JWT.
+A Spring Boot RESTful backend for managing products, categories, and user authentication with JWT security and role-based access control.
 
-## Features
-
-* User Registration & Login
-* JWT Authentication
-* Role-Based Authorization (ADMIN / CUSTOMER)
-* Product Management
-* Category Management
-* Spring Security Integration
-* RESTful API Design
+---
 
 ## Tech Stack
 
-* Java
-* Spring Boot
-* Spring Security
-* Spring Data JPA
-* JWT (JSON Web Token)
-* Maven
-* MySQL
-* ModelMapper
+| Layer | Technology |
+| :--- | :--- |
+| **Language** | Java 21 |
+| **Framework** | Spring Boot 3 |
+| **Security** | Spring Security + JWT |
+| **Database** | MySQL |
+| **ORM** | Spring Data JPA / Hibernate |
+| **Build Tool** | Maven |
+| **Object Mapping** | ModelMapper |
 
-## Project Structure
+---
 
-```text
-src/main/java/com/SimpleE_Commerce/Demo
-│
-├── Config
-├── Controllers
-├── DTO
-├── Entity
-├── Repository
-├── Security
-└── Service
-```
+## Features
+
+- **Stateless Authentication**: JWT token issuance with BCrypt password hashing.
+- **Role-Based Access Control (RBAC)**: Fine-grained method security (`@PreAuthorize`) separating `ADMIN` from authenticated `CUSTOMER` operations.
+- **Product Management**: Full CRUD operations with category association and DTO conversion.
+- **Category Management**: Category listing and administrative deletion.
+- **Global Exception Handling**: Custom exceptions mapped to clear HTTP error responses.
+
+---
 
 ## API Endpoints
 
-### Authentication
+### 🔐 Authentication
 
-| Method | Endpoint           | Description                 |
-| ------ | ------------------ | --------------------------- |
-| POST   | /api/auth/register | Register a new user         |
-| POST   | /api/auth/login    | Login and receive JWT token |
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/register` | Public | Register a new user account |
+| `POST` | `/api/auth/login` | Public | Authenticate credentials and receive JWT Bearer token |
 
-### Products
+### 📦 Products
 
-| Method | Endpoint           | Access              |
-| ------ | ------------------ | ------------------- |
-| GET    | /api/products      | Authenticated Users |
-| GET    | /api/products/{id} | Authenticated Users |
-| POST   | /api/products      | ADMIN               |
-| PUT    | /api/products/{id} | ADMIN               |
-| DELETE | /api/products/{id} | ADMIN               |
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/products` | Authenticated | Retrieve all products |
+| `GET` | `/api/products/{id}` | Authenticated | Retrieve product details by ID |
+| `POST` | `/api/products` | `ADMIN` only | Create a new product |
+| `PUT` | `/api/products/{id}` | `ADMIN` only | Update product details |
+| `DELETE` | `/api/products/{id}` | `ADMIN` only | Delete a product |
 
-### Categories
+### 🗂️ Categories
 
-| Method | Endpoint             | Access              |
-| ------ | -------------------- | ------------------- |
-| GET    | /api/categories      | Authenticated Users |
-| DELETE | /api/categories/{id} | ADMIN               |
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/categories` | Authenticated | Retrieve all categories |
+| `DELETE` | `/api/categories/{id}` | `ADMIN` only | Delete a category by ID |
 
-## Security
+---
 
-The application uses JWT authentication.
+## Getting Started
 
-After login, include the token in requests:
+### Prerequisites
+- Java 21+
+- MySQL 8+
+- Maven
 
-```http
-Authorization: Bearer YOUR_JWT_TOKEN
+### 1. Database Setup
+Create a MySQL database:
+```sql
+CREATE DATABASE ecommerce_db;
 ```
 
-## Running the Project
+Update your `src/main/resources/application.properties` with your database credentials:
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/ecommerce_db
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+```
 
-### Clone Repository
-
+### 2. Build & Run
 ```bash
-git clone <repository-url>
+# Clone the repository
+git clone https://github.com/alshwadfy/Simple-E-Commerce-API.git
 cd Simple-E-Commerce-API
-```
 
-### Configure Database
-
-Update `application.properties` with your database credentials.
-
-### Run Application
-
-```bash
+# Run with Maven Wrapper
 ./mvnw spring-boot:run
 ```
 
-or
+API will be available at `http://localhost:8080`.
 
-```bash
-mvn spring-boot:run
-```
-
-## Example Login Request
-
+### 3. Authentication Flow
+Send a POST request to `/api/auth/login`:
 ```json
 {
   "email": "user@example.com",
@@ -107,6 +97,7 @@ mvn spring-boot:run
 }
 ```
 
-## Author
-
-Ezz Al-din
+Include the returned token in subsequent requests:
+```http
+Authorization: Bearer <your-jwt-token>
+```
